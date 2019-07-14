@@ -35,13 +35,13 @@ class MainActivity : AppCompatActivity() {
             permission_button.setOnClickListener {
                 val intent = Intent(DevicePolicyManager.ACTION_ADD_DEVICE_ADMIN)
                 intent.putExtra(DevicePolicyManager.EXTRA_DEVICE_ADMIN, componentName)
-                intent.putExtra(DevicePolicyManager.EXTRA_ADD_EXPLANATION, "端末をロック画面へ移行させるために使います。")
+                intent.putExtra(DevicePolicyManager.EXTRA_ADD_EXPLANATION, getString(R.string.permission_description))
                 startActivityForResult(intent, ADMIN_INTENT)
             }
         } else {
             //あるのでスリープへ
             devicePolicyManager.lockNow()
-            //Activityも閉じる
+            //あぷりも閉じる
             finishAndRemoveTask()
         }
     }
@@ -51,9 +51,11 @@ class MainActivity : AppCompatActivity() {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == ADMIN_INTENT) {
             if (resultCode == Activity.RESULT_OK) {
-                Toast.makeText(this, "権限が付与されました。", Toast.LENGTH_SHORT).show()
+                //おｋ
+                Toast.makeText(this, getString(R.string.permission_ok_callback), Toast.LENGTH_SHORT).show()
             } else {
-                Toast.makeText(this, "権限が付与されませんでした。", Toast.LENGTH_SHORT).show()
+                //だめだった
+                Toast.makeText(this, getString(R.string.permission_no_callback), Toast.LENGTH_SHORT).show()
             }
         }
     }

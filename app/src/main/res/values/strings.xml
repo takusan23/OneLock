@@ -1,3 +1,11 @@
 <resources>
     <string name="app_name">OneLock</string>
+    <string name="permission_ok_callback">Your authority has been granted.</string>
+    <string name="permission_no_callback">No authority was granted.</string>
+    <string name="permission_ok">You are authorized.</string>
+    <string name="app_description">You need device management authority to move to the lock screen. \n After giving
+        authority, you can go to sleep simply by pressing the app icon.
+    </string>
+    <string name="permission_screen">To device management authority screen</string>
+    <string name="permission_description">Used to shift the terminal to the lock screen.</string>
 </resources>

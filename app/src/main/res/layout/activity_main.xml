@@ -12,10 +12,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:text="端末管理者権限が必要です。\n権限を与えた後はアプリアイコンを押すだけでスリープへ移行できます。"
+            android:text="@string/app_description"
     />
     <Button
-            android:text="権限画面へ"
+            android:text="@string/permission_screen"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" android:id="@+id/permission_button"/>
 
