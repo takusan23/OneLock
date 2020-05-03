@@ -39,11 +39,19 @@ class MainActivity : AppCompatActivity() {
                 startActivityForResult(intent, ADMIN_INTENT)
             }
         } else {
-            //あるのでスリープへ
+            // //あるのでスリープへ
             devicePolicyManager.lockNow()
             //あぷりも閉じる
             finishAndRemoveTask()
         }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        // //あるのでスリープへ
+        devicePolicyManager.lockNow()
+        //あぷりも閉じる
+        finishAndRemoveTask()
     }
 
     /*権限もらえたかチェック*/
