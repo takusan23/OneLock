@@ -48,8 +48,8 @@ class MainActivity : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
-        // //あるのでスリープへ
-        devicePolicyManager.lockNow()
+        // あるのでスリープへ
+        // devicePolicyManager.lockNow()
         //あぷりも閉じる
         finishAndRemoveTask()
     }

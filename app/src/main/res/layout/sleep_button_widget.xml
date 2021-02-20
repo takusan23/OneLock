@@ -10,5 +10,5 @@
             android:id="@+id/sleep_imageview"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:src="@drawable/ic_phonelink_lock_black_24dp" />
+            android:src="@drawable/ic_sleep_droid_icon" />
 </LinearLayout>
