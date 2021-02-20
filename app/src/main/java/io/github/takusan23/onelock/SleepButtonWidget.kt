@@ -4,9 +4,15 @@ import android.app.PendingIntent
 import android.app.admin.DevicePolicyManager
 import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProvider
+import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
+import android.content.res.ColorStateList
+import android.graphics.Color
+import android.graphics.drawable.Icon
+import android.widget.ImageView
 import android.widget.RemoteViews
+import androidx.preference.PreferenceManager
 
 /**
  * Implementation of App Widget functionality.
@@ -15,7 +21,7 @@ class SleepButtonWidget : AppWidgetProvider() {
     override fun onUpdate(context: Context, appWidgetManager: AppWidgetManager, appWidgetIds: IntArray) {
         // There may be multiple widgets active, so update all of them
         for (appWidgetId in appWidgetIds) {
-            updateAppWidget(context, appWidgetManager, appWidgetId)
+            updateAppWidget(context)
         }
     }
 
@@ -38,8 +44,7 @@ class SleepButtonWidget : AppWidgetProvider() {
 
 }
 
-internal fun updateAppWidget(context: Context, appWidgetManager: AppWidgetManager, appWidgetId: Int) {
-    val widgetText = context.getString(R.string.appwidget_text)
+fun updateAppWidget(context: Context) {
     // Construct the RemoteViews object
     val views = RemoteViews(context.packageName, R.layout.sleep_button_widget)
     // BroadCast
@@ -49,6 +54,23 @@ internal fun updateAppWidget(context: Context, appWidgetManager: AppWidgetManage
     val pendingIntent =
         PendingIntent.getBroadcast(context, 114, intent, PendingIntent.FLAG_UPDATE_CURRENT)
     views.setOnClickPendingIntent(R.id.sleep_imageview, pendingIntent)
-    // Instruct the widget manager to update the widget
-    appWidgetManager.updateAppWidget(appWidgetId, views)
+    // アイコンの色
+    val prefSetting = PreferenceManager.getDefaultSharedPreferences(context)
+    val iconColor = if (prefSetting.getBoolean("widget_color_black", true)) {
+        Color.BLACK
+    } else {
+        Color.WHITE
+    }
+    // アイコンを設定
+    val icon = Icon.createWithResource(context, R.drawable.ic_sleep_droid_icon)
+    icon.setTintList(ColorStateList.valueOf(iconColor))
+    views.setImageViewIcon(R.id.sleep_imageview, icon)
+    // Contextあれば更新できる！
+    val componentName = ComponentName(context, SleepButtonWidget::class.java)
+    val manager = AppWidgetManager.getInstance(context)
+    val ids = manager.getAppWidgetIds(componentName)
+    ids.forEach { id ->
+        // 更新
+        manager.updateAppWidget(id, views)
+    }
 }

@@ -7,6 +7,9 @@
         android:padding="@dimen/widget_margin">
 
     <ImageView
+            android:clickable="true"
+            android:focusable="true"
+            android:foreground="?android:attr/selectableItemBackground"
             android:id="@+id/sleep_imageview"
             android:layout_width="match_parent"
             android:layout_height="match_parent"

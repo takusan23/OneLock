@@ -10,4 +10,5 @@
     <string name="permission_description">Used to shift the terminal to the lock screen.</string>
     <string name="appwidget_text">EXAMPLE</string>
     <string name="add_widget">Add widget</string>
+    <string name="widget_color_black">Widget color black</string>
 </resources>
