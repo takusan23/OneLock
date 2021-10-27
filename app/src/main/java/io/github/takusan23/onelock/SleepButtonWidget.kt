@@ -7,18 +7,24 @@ import android.appwidget.AppWidgetProvider
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
-import android.content.res.ColorStateList
 import android.graphics.Color
-import android.graphics.drawable.Icon
-import android.widget.ImageView
+import android.graphics.PorterDuff
+import android.os.Build
 import android.widget.RemoteViews
+import androidx.core.content.ContextCompat
+import androidx.core.graphics.drawable.DrawableCompat
+import androidx.core.graphics.drawable.toBitmap
 import androidx.preference.PreferenceManager
 
 /**
  * Implementation of App Widget functionality.
  */
 class SleepButtonWidget : AppWidgetProvider() {
-    override fun onUpdate(context: Context, appWidgetManager: AppWidgetManager, appWidgetIds: IntArray) {
+    override fun onUpdate(
+        context: Context,
+        appWidgetManager: AppWidgetManager,
+        appWidgetIds: IntArray
+    ) {
         // There may be multiple widgets active, so update all of them
         for (appWidgetId in appWidgetIds) {
             updateAppWidget(context)
@@ -51,20 +57,27 @@ fun updateAppWidget(context: Context) {
     val intent = Intent(context, SleepButtonWidget::class.java).apply {
         putExtra("sleep", "on")
     }
-    val pendingIntent =
-        PendingIntent.getBroadcast(context, 114, intent, PendingIntent.FLAG_UPDATE_CURRENT)
-    views.setOnClickPendingIntent(R.id.sleep_imageview, pendingIntent)
-    // アイコンの色
-    val prefSetting = PreferenceManager.getDefaultSharedPreferences(context)
-    val iconColor = if (prefSetting.getBoolean("widget_color_black", true)) {
-        Color.BLACK
+    val pendingIntent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+        PendingIntent.getBroadcast(context, 114, intent, PendingIntent.FLAG_IMMUTABLE)
     } else {
-        Color.WHITE
+        PendingIntent.getBroadcast(context, 114, intent, PendingIntent.FLAG_UPDATE_CURRENT)
     }
-    // アイコンを設定
-    val icon = Icon.createWithResource(context, R.drawable.ic_sleep_droid_icon)
-    icon.setTintList(ColorStateList.valueOf(iconColor))
-    views.setImageViewIcon(R.id.sleep_imageview, icon)
+    views.setOnClickPendingIntent(R.id.sleep_imageview, pendingIntent)
+    // アイコンの色。Android 12以降はDynamicColorを使うので
+    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) {
+        val prefSetting = PreferenceManager.getDefaultSharedPreferences(context)
+        val iconColor = if (prefSetting.getBoolean("widget_color_black", true)) {
+            Color.BLACK
+        } else {
+            Color.WHITE
+        }
+        // アイコンを設定
+        val drawable = DrawableCompat.wrap(ContextCompat.getDrawable(context, R.drawable.ic_sleep_droid_icon)!!)
+        DrawableCompat.setTint(drawable, iconColor)
+        DrawableCompat.setTintMode(drawable, PorterDuff.Mode.SRC_IN)
+        val bitmap = drawable.toBitmap()
+        views.setImageViewBitmap(R.id.sleep_imageview, bitmap)
+    }
     // Contextあれば更新できる！
     val componentName = ComponentName(context, SleepButtonWidget::class.java)
     val manager = AppWidgetManager.getInstance(context)
