@@ -4,26 +4,23 @@ import android.app.Activity
 import android.app.admin.DevicePolicyManager
 import android.content.ComponentName
 import android.content.Context
-import androidx.appcompat.app.AppCompatActivity
-import android.os.Bundle
 import android.content.Intent
+import android.os.Bundle
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.edit
 import androidx.preference.PreferenceManager
-import kotlinx.android.synthetic.main.activity_main.*
+import io.github.takusan23.onelock.databinding.ActivityMainBinding
 
 
 class MainActivity : AppCompatActivity() {
-    val ADMIN_INTENT = 1000
-    lateinit var devicePolicyManager: DevicePolicyManager
-
+    private val devicePolicyManager by lazy { getSystemService(Context.DEVICE_POLICY_SERVICE) as DevicePolicyManager }
     private val prefSetting by lazy { PreferenceManager.getDefaultSharedPreferences(this) }
+    private val viewBinding by lazy { ActivityMainBinding.inflate(layoutInflater) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
-
-        devicePolicyManager = getSystemService(Context.DEVICE_POLICY_SERVICE) as DevicePolicyManager
+        setContentView(viewBinding.root)
 
         getPermission()
 
@@ -33,12 +30,12 @@ class MainActivity : AppCompatActivity() {
 
     /** ウイジェットの色のスイッチ */
     private fun setSwitch() {
-        activity_main_widget_color.setOnCheckedChangeListener { buttonView, isChecked ->
+        viewBinding.activityMainWidgetColor.setOnCheckedChangeListener { buttonView, isChecked ->
             prefSetting.edit { putBoolean("widget_color_black", isChecked) }
             // ウイジェット更新。トップレベル関数
             updateAppWidget(this)
         }
-        activity_main_widget_color.isChecked = prefSetting.getBoolean("widget_color_black", true)
+        viewBinding.activityMainWidgetColor.isChecked = prefSetting.getBoolean("widget_color_black", true)
     }
 
     /*管理者権限をもらう*/
@@ -48,7 +45,7 @@ class MainActivity : AppCompatActivity() {
             //無い時
             //権限画面に飛ばす
             //押して認証画面へ
-            permission_button.setOnClickListener {
+            viewBinding.permissionButton.setOnClickListener {
                 val intent = Intent(DevicePolicyManager.ACTION_ADD_DEVICE_ADMIN)
                 intent.putExtra(DevicePolicyManager.EXTRA_DEVICE_ADMIN, componentName)
                 intent.putExtra(DevicePolicyManager.EXTRA_ADD_EXPLANATION, getString(R.string.permission_description))
@@ -79,4 +76,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    companion object {
+        const val ADMIN_INTENT = 1000
+    }
 }
